@@ -1,0 +1,11 @@
+name    'pertino_client'
+version '0.1.1'
+source 'https://github.com/FIX_THIS.git'
+author 'devops@pertino.com'
+license 'Apache License, Version 2.0'
+summary 'Install and configure Pertino Client'
+description 'Install and configure Pertino Client'
+project_page 'https://github.com/FIX_THIS.git'
+
+## Add dependencies, if any:
+# dependency 'username/name', '>= 1.2.0'
