@@ -1,3 +1,10 @@
+# == Class: pertino_client::dependencies
+#
+# Installs Pertino Client
+#
+# === Parameters
+# None
+#
 class pertino_client::dependencies {
 
   Exec {
@@ -15,21 +22,22 @@ class pertino_client::dependencies {
       }
 
       exec { 'import_key':
-        command     => "/bin/rpm --import $rpmkey",
+        command     => "/bin/rpm --import ${rpmkey}",
         subscribe   => File[$rpmkey],
         refreshonly => true,
       }
 
       yumrepo { 'pertino':
-        descr    => "Pertino $::operatingsystemrelease $::architecture Repository ",
+        descr    => "Pertino ${::operatingsystemrelease} \
+            ${::architecture} Repository ",
         enabled  => 1,
-        baseurl  => $::operatingsystem ? {
-          /(RedHat|redhat|CentOS|centos)/ =>  "http://reposerver.pertino.com/rpms",
-          'Fedora'                        =>  "http://reposerver.pertino.com/rpms",
-          'Amazon'                        =>  "http://reposerver.pertino.com/rpms",
-        },
         gpgcheck => 1,
         gpgkey   => 'http://reposerver.pertino.com/Pertino-GPG-Key.pub',
+        baseurl  => ::operatingsystem ? {
+          /(RedHat|redhat|CentOS|centos)/ => 'http://reposerver.pertino.com/rpms',
+          'Fedora'                        => 'http://reposerver.pertino.com/rpms',
+          'Amazon'                        => 'http://reposerver.pertino.com/rpms',
+        },
       }
     }
 
@@ -46,13 +54,13 @@ class pertino_client::dependencies {
         group   => 'root',
         mode    => '0644',
         require => Package['apt-transport-https'],
-        notify  => Exec['add-pertino-apt-key']
+        notify  => Exec['add-pertino-apt-key'],
       }
 
       exec { 'add-pertino-apt-key':
         command     => 'wget -O - http://reposerver.pertino.com/Pertino-GPG-Key.pub | apt-key add -',
         refreshonly => true,
-        notify  => Exec['apt-update']
+        notify      => Exec['apt-update'],
       }
 
       exec { 'apt-update':
@@ -62,7 +70,7 @@ class pertino_client::dependencies {
     }
 
     default: {
-      fail('Platform not supported by Pertino module. Patches are welcome.')
+      fail('Platform unsupported by pertino_client, patches are welcome!')
     }
   }
 }
